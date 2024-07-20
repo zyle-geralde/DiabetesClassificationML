@@ -1,7 +1,10 @@
 import numpy as np
 import pandas as pd
+import copy,math
+from sklearn.metrics import accuracy_score,roc_curve,auc
 np.set_printoptions(precision=2)
 np.set_printoptions(edgeitems=20, linewidth=200)
+import matplotlib.pyplot as plt
 
 
 def load_data():
@@ -74,18 +77,67 @@ def compute_regularized_derev(x,y,w,b,lambda_ = 1):
     return db,dw
 
 
-np.random.seed(1)
-X_tmp = np.random.rand(5,3)
-y_tmp = np.array([0,1,0,1,0])
-w_tmp = np.random.rand(X_tmp.shape[1])
-b_tmp = 0.5
-lambda_tmp = 0.7
-dj_db_tmp, dj_dw_tmp =  compute_regularized_derev(X_tmp, y_tmp, w_tmp, b_tmp, lambda_tmp)
 
-print(f"dj_db: {dj_db_tmp}", )
-print(f"Regularized dj_dw:\n {dj_dw_tmp.tolist()}", )
+def compute_gradiet_descent(x,y,alpha,w_init,b_init,compute_derev,cost_function,num_iter,lambda_):
+    m = x.shape[0]
+    n = x.shape[1]
 
-'''def compute_gradiet_descent(x,y,alpha,w_init,b_init,compute_derev,cost_function,num_iter):
-    return'''
+    w = copy.deepcopy(w_init)
+    b = b_init
+
+    for i in range(num_iter):
+        db,dw = compute_derev(x,y,w,b,lambda_)
+
+        w = w - alpha * dw
+        b = b - alpha * db
+
+
+        if(i % math.ceil(num_iter/10) == 0):
+            print(f" Cost Function: {cost_function(x,y,w,b,lambda_)}  w: {w}  b: {b}")
+    return w,b
+
+alpha  = 0.1
+w_init = np.zeros((xnorm.shape[1]))
+b_init = 0.0
+lambda_ = 0.7
+
+w_out,b_out = compute_gradiet_descent(xnorm,y_train,alpha,w_init,b_init,compute_regularized_derev,compute_regularized_cost,10000,lambda_)
+print(f"final w: {w_out}\tfinale b:{b_out}")
+
+
+def predict(x, w, b):
+    z = np.dot(x, w) + b
+    y_pred_prob = sigmoid(z)
+    y_pred_class = (y_pred_prob >= 0.5).astype(int)  # Convert probabilities to binary classes (0 or 1)
+    return y_pred_class,y_pred_prob
+
+xtest_norm,m,s = z_score_normalize(x_test);
+
+y_pred,y_prob= predict(xtest_norm,w_out,b_out);
+
+
+
+'''Accuracy Score'''
+print("\nAccuracy")
+accuracy = accuracy_score(y_test, y_pred)
+print(accuracy)
+
+'''Calculate ROC AND Plot ROC'''
+fpr, tpr, thresholds = roc_curve(y_test, y_prob)
+roc_auc = auc(fpr, tpr)
+print(f"AUC: {roc_auc:.2f}")
+
+plt.figure(figsize=(8, 6))
+plt.plot(fpr, tpr, color='darkorange', lw=2, label=f'ROC curve (AUC = {roc_auc:.2f})')
+plt.plot([0, 1], [0, 1], color='navy', lw=2, linestyle='--')
+plt.xlim([0.0, 1.0])
+plt.ylim([0.0, 1.05])
+plt.xlabel('False Positive Rate')
+plt.ylabel('True Positive Rate')
+plt.title('Receiver Operating Characteristic (ROC) Curve')
+plt.legend(loc="lower right")
+plt.show()
+
+
 
 
