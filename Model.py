@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 import copy,math
-from sklearn.metrics import accuracy_score,roc_curve,auc,confusion_matrix
+from sklearn.metrics import accuracy_score,roc_curve,auc,confusion_matrix,classification_report
 np.set_printoptions(precision=2)
 np.set_printoptions(edgeitems=20, linewidth=200)
 import matplotlib.pyplot as plt
@@ -141,6 +141,13 @@ plt.show()
 '''Confusion Metrix'''
 print(confusion_matrix(y_test,y_pred))
 print(pd.crosstab(y_test,y_pred,rownames=["Actual Labels"],colnames=["Predicted Labels"]))
+
+
+'''Classification Report'''
+print(classification_report(y_test,y_pred))
+
+
+'''Adjust the polynomial expression of the model'''
 
 
 
