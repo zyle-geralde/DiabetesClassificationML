@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 import copy,math
-from sklearn.metrics import accuracy_score,roc_curve,auc
+from sklearn.metrics import accuracy_score,roc_curve,auc,confusion_matrix
 np.set_printoptions(precision=2)
 np.set_printoptions(edgeitems=20, linewidth=200)
 import matplotlib.pyplot as plt
@@ -137,6 +137,10 @@ plt.ylabel('True Positive Rate')
 plt.title('Receiver Operating Characteristic (ROC) Curve')
 plt.legend(loc="lower right")
 plt.show()
+
+'''Confusion Metrix'''
+print(confusion_matrix(y_test,y_pred))
+print(pd.crosstab(y_test,y_pred,rownames=["Actual Labels"],colnames=["Predicted Labels"]))
 
 
 
