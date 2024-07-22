@@ -4,7 +4,7 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import roc_curve,auc,accuracy_score,confusion_matrix,classification_report
 import pandas as pd
 
-
+'''MODEL IMPLEMENTED USING SCIKIT-LEARN'''
 def load_data():
     data = pd.read_csv("diabetes2.csv")
 

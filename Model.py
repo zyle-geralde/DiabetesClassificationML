@@ -1,3 +1,4 @@
+
 import numpy as np
 import pandas as pd
 import copy,math
@@ -7,6 +8,7 @@ np.set_printoptions(edgeitems=20, linewidth=200)
 import matplotlib.pyplot as plt
 
 
+'''MANUALLY IMPLEMENTED MODEL'''
 def load_data():
     data = pd.read_csv("diabetes2.csv")
 
