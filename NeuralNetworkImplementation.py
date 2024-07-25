@@ -32,7 +32,7 @@ norm_l = tf.keras.layers.Normalization(axis = -1)
 norm_l.adapt(x_train)
 x_train_norm = norm_l(x_train)
 
-smote = SMOTE(random_state=42)
+smote = SMOTE(random_state=5)
 X_train_resampled, y_train_resampled = smote.fit_resample(x_train_norm, y_train)
 print(y_train_resampled.shape)
 print(X_train_resampled.shape)
@@ -41,12 +41,10 @@ from tensorflow.keras.layers import Dropout
 # Define the model
 model = Sequential([
     tf.keras.Input(shape=(8,)),
-    Dense(units=1000, activation='relu'),
-    Dropout(0.5),  # Another Dropout layer
-    Dense(units=600, activation='relu'),
-    Dropout(0.5),  # Add Dropout with a rate of 0.2 (20% of neurons will be randomly dropped during training)
-    Dense(units=300, activation='relu'),
-    Dropout(0.5),  # Another Dropout layer
+    Dense(units=10, activation='relu'),
+    #Dropout(0.3),  # Another Dropout layer
+    Dense(units=5, activation='relu'),
+    #Dropout(0.3),  # Add Dropout with a rate of 0.n (n% of neurons will be randomly dropped during training)
     Dense(units=1, activation='sigmoid'),
 ], name="mymodel")
 
@@ -57,10 +55,10 @@ print(model.summary())
 
 model.compile(
     loss = tf.keras.losses.BinaryCrossentropy(),
-    optimizer = tf.keras.optimizers.Adam(0.006),
+    optimizer = tf.keras.optimizers.Adam(0.001),
 )
 
-model.fit(X_train_resampled, y_train_resampled,epochs = 300)
+model.fit(X_train_resampled, y_train_resampled,epochs = 100)
 
 x_test_norm = norm_l(x_test)
 prediction = model.predict(x_test_norm)
@@ -84,5 +82,4 @@ print(pd.crosstab(y_test.flatten(),y_pred.flatten(),rownames=["Actual"],colnames
 
 print(classification_report(y_test.flatten(),y_pred.flatten()))
 
-'''I prioritized recall than precision'''
 
