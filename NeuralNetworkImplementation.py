@@ -30,38 +30,15 @@ norm_l = tf.keras.layers.Normalization(axis = -1)
 norm_l.adapt(x_train)
 x_train_norm = norm_l(x_train)
 
-model = Sequential(
-    [
-        tf.keras.Input(shape = (8,)),
-        Dense(units=600, activation="relu"),
-        Dense(units=575, activation="relu"),
-        Dense(units=550, activation="relu"),
-        Dense(units=525, activation="relu"),
-        Dense(units=500, activation="relu"),
-        Dense(units=475, activation="relu"),
-        Dense(units=450, activation="relu"),
-        Dense(units=425, activation="relu"),
-        Dense(units=400, activation="relu"),
-        Dense(units=375, activation="relu"),
-        Dense(units=350, activation="relu"),
-        Dense(units=325, activation="relu"),
-        Dense(units=300, activation="relu"),
-        Dense(units=275, activation="relu"),
-        Dense(units=250, activation="relu"),
-        Dense(units=200, activation="relu"),
-        Dense(units=175, activation="relu"),
-        Dense(units=150, activation="relu"),
-        Dense(units=125, activation="relu"),
-        Dense(units=100, activation="relu"),
-        Dense(units=75, activation="relu"),
-        Dense(units=65, activation="relu"),
-        Dense(units=50,activation="relu"),
-        Dense(units=38,activation="relu"),
-        Dense(units=25,activation="relu"),
-        Dense(units=15,activation="relu"),
-        Dense(units=1,activation="sigmoid"),
-    ],name = "mymodel"
-)
+from tensorflow.keras.layers import Dropout
+
+model = Sequential([
+    tf.keras.Input(shape=(8,)),
+    Dense(units=128, activation="sigmoid"),
+    Dense(units=62, activation="sigmoid"),
+    Dense(units=1, activation="sigmoid"),
+], name="mymodel")
+
 
 print(model.summary())
 
@@ -75,7 +52,7 @@ model.compile(
     optimizer = tf.keras.optimizers.Adam(0.001),
 )
 
-model.fit(x_train_norm,y_train,epochs = 650)
+model.fit(x_train_norm,y_train,epochs = 100)
 
 x_test_norm = norm_l(x_test)
 prediction = model.predict(x_test_norm)
