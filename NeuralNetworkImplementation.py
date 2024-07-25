@@ -54,10 +54,6 @@ model = Sequential([
 
 print(model.summary())
 
-'''[layer1,layer2,layer3] = model.layers
-W1,b1 = layer1.get_weights();
-W2,b2 = layer2.get_weights();
-W3,b3 = layer3.get_weights();'''
 
 model.compile(
     loss = tf.keras.losses.BinaryCrossentropy(),
@@ -70,12 +66,6 @@ x_test_norm = norm_l(x_test)
 prediction = model.predict(x_test_norm)
 y_pred = (prediction>=0.5).astype(int)
 
-'''x_try = x_test[8].reshape(1,8)
-x_try_norm = norm_l(x_try)
-prediction = model.predict(x_try_norm)
-y_pred = (prediction>=0.5).astype(int)
-print(y_pred)
-print(y_test[8])'''
 
 
 '''Accuracy Score'''
@@ -93,4 +83,6 @@ print(pd.crosstab(y_test.flatten(),y_pred.flatten(),rownames=["Actual"],colnames
 '''Classification Report'''
 
 print(classification_report(y_test.flatten(),y_pred.flatten()))
+
+'''I prioritized recall than precision'''
 
