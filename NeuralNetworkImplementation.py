@@ -4,8 +4,10 @@ import pandas as pd
 import tensorflow as tf
 from tensorflow.keras import Sequential
 from tensorflow.keras.layers import Dense
-from sklearn.metrics import accuracy_score,roc_curve,auc,confusion_matrix,classification_report
+from tensorflow.keras.activations import linear, relu, sigmoid
+from sklearn.metrics import accuracy_score,roc_curve,auc,confusion_matrix,classification_report, precision_score,recall_score
 np.set_printoptions(edgeitems=2000, linewidth=2000)
+from imblearn.over_sampling import SMOTE
 
 import logging
 logging.getLogger("tensorflow").setLevel(logging.ERROR)
@@ -30,14 +32,24 @@ norm_l = tf.keras.layers.Normalization(axis = -1)
 norm_l.adapt(x_train)
 x_train_norm = norm_l(x_train)
 
+smote = SMOTE(random_state=42)
+X_train_resampled, y_train_resampled = smote.fit_resample(x_train_norm, y_train)
+print(y_train_resampled.shape)
+print(X_train_resampled.shape)
 from tensorflow.keras.layers import Dropout
 
+# Define the model
 model = Sequential([
     tf.keras.Input(shape=(8,)),
-    Dense(units=128, activation="sigmoid"),
-    Dense(units=62, activation="sigmoid"),
-    Dense(units=1, activation="sigmoid"),
+    Dense(units=1000, activation='relu'),
+    Dropout(0.5),  # Another Dropout layer
+    Dense(units=600, activation='relu'),
+    Dropout(0.5),  # Add Dropout with a rate of 0.2 (20% of neurons will be randomly dropped during training)
+    Dense(units=300, activation='relu'),
+    Dropout(0.5),  # Another Dropout layer
+    Dense(units=1, activation='sigmoid'),
 ], name="mymodel")
+
 
 
 print(model.summary())
@@ -49,17 +61,27 @@ W3,b3 = layer3.get_weights();'''
 
 model.compile(
     loss = tf.keras.losses.BinaryCrossentropy(),
-    optimizer = tf.keras.optimizers.Adam(0.001),
+    optimizer = tf.keras.optimizers.Adam(0.006),
 )
 
-model.fit(x_train_norm,y_train,epochs = 100)
+model.fit(X_train_resampled, y_train_resampled,epochs = 300)
 
 x_test_norm = norm_l(x_test)
 prediction = model.predict(x_test_norm)
 y_pred = (prediction>=0.5).astype(int)
 
+'''x_try = x_test[8].reshape(1,8)
+x_try_norm = norm_l(x_try)
+prediction = model.predict(x_try_norm)
+y_pred = (prediction>=0.5).astype(int)
+print(y_pred)
+print(y_test[8])'''
+
+
 '''Accuracy Score'''
 print(accuracy_score(y_test.flatten(),y_pred.flatten()))#.flatten() to ensure that it is a 1-d array
+print(precision_score(y_test.flatten(),y_pred.flatten()))
+print(recall_score(y_test.flatten(),y_pred.flatten()))
 
 print("y_test shape:", y_test.shape)
 print("y_pred shape:", y_pred.shape)
