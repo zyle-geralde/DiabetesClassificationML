@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib as pyplot
 import pandas as pd
 import tensorflow as tf
-from tensorflow.keras import Sequential
+from tensorflow.keras import Sequential,regularizers,layers,models
 from tensorflow.keras.layers import Dense
 from tensorflow.keras.activations import linear, relu, sigmoid
 from sklearn.metrics import accuracy_score,roc_curve,auc,confusion_matrix,classification_report, precision_score,recall_score
@@ -32,20 +32,32 @@ norm_l = tf.keras.layers.Normalization(axis = -1)
 norm_l.adapt(x_train)
 x_train_norm = norm_l(x_train)
 
-smote = SMOTE(random_state=5)
+smote = SMOTE(random_state=42)
 X_train_resampled, y_train_resampled = smote.fit_resample(x_train_norm, y_train)
 print(y_train_resampled.shape)
 print(X_train_resampled.shape)
 from tensorflow.keras.layers import Dropout
 
+tf.random.set_seed(1234)
 # Define the model
-model = Sequential([
+model = models.Sequential([
     tf.keras.Input(shape=(8,)),
-    Dense(units=10, activation='relu'),
-    #Dropout(0.3),  # Another Dropout layer
-    Dense(units=5, activation='relu'),
-    #Dropout(0.3),  # Add Dropout with a rate of 0.n (n% of neurons will be randomly dropped during training)
-    Dense(units=1, activation='sigmoid'),
+    layers.Dense(units=150, activation=None, kernel_regularizer=regularizers.l2(0.01)),
+    layers.BatchNormalization(),
+    layers.ReLU(),
+    layers.Dropout(0.2),  # Dropout added to reduce overfitting
+
+    layers.Dense(units=65, activation=None, kernel_regularizer=regularizers.l2(0.01)),
+    layers.BatchNormalization(),
+    layers.ReLU(),
+    layers.Dropout(0.2),
+
+    layers.Dense(units=35, activation=None, kernel_regularizer=regularizers.l2(0.01)),
+    layers.BatchNormalization(),
+    layers.ReLU(),
+    layers.Dropout(0.2),
+
+    layers.Dense(units=1, activation='linear', kernel_regularizer=regularizers.l2(0.01)),
 ], name="mymodel")
 
 
@@ -54,15 +66,18 @@ print(model.summary())
 
 
 model.compile(
-    loss = tf.keras.losses.BinaryCrossentropy(),
-    optimizer = tf.keras.optimizers.Adam(0.001),
+    loss = tf.keras.losses.BinaryCrossentropy(from_logits=True),
+    optimizer = tf.keras.optimizers.Adam(0.00001),
 )
 
-model.fit(X_train_resampled, y_train_resampled,epochs = 100)
+model.fit(X_train_resampled, y_train_resampled,epochs = 500)
 
 x_test_norm = norm_l(x_test)
-prediction = model.predict(x_test_norm)
-y_pred = (prediction>=0.5).astype(int)
+logit = model(x_test_norm)
+pred = tf.nn.sigmoid(logit).numpy()
+'''prediction = model.predict(x_test_norm)
+probabilities = tf.sigmoid(prediction)'''
+y_pred = (pred >= 0.5).astype(int)
 
 
 
