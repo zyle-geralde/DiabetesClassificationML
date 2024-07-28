@@ -67,10 +67,10 @@ print(model.summary())
 
 model.compile(
     loss = tf.keras.losses.BinaryCrossentropy(from_logits=True),
-    optimizer = tf.keras.optimizers.Adam(0.00001),
+    optimizer = tf.keras.optimizers.Adam(learning_rate = 0.001),
 )
 
-model.fit(X_train_resampled, y_train_resampled,epochs = 500)
+model.fit(X_train_resampled, y_train_resampled,epochs = 1300)
 
 x_test_norm = norm_l(x_test)
 logit = model(x_test_norm)
