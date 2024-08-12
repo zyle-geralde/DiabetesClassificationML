@@ -45,11 +45,11 @@ x_train_norm, y_train_smote = smote.fit_resample(x_train_norm, y_train)
 
 accuracy_list_train = []
 accuracy_list_val = []
-min_samples_split_list = [2,10, 30, 50, 100, 200, 300, 700]
+subsamples_list = [0.0,0.11, 0.22, 0.35,0.53, 0.62, 0.78, 0.81,1]
 max_depth_list = [2, 4, 8, 16, 32, 64, 80,None]
 n_estimators_list = [10,25,50,75,100,200,300,500]
 
-#for n_estimator
+#for n_estimator = 50
 for n_estimators in n_estimators_list:
     # You can fit the model at the same time you define it, because the fit function returns the fitted estimator.
     xgb_model = XGBClassifier(n_estimators = n_estimators, learning_rate=0.1, verbosity=1, random_state=RANDOM_STATE,
@@ -75,10 +75,13 @@ plt.legend(['Train','Validation'])
 plt.show()
 
 
-#for n_estimator
-for min_samples_split in min_samples_split_list:
+accuracy_list_train = []
+accuracy_list_val = []
+
+#for subsamples = 1
+for subsample in subsamples_list:
     # You can fit the model at the same time you define it, because the fit function returns the fitted estimator.
-    xgb_model = XGBClassifier(n_estimators = 50,min_samples_split = min_samples_split, learning_rate=0.1, verbosity=1, random_state=RANDOM_STATE,
+    xgb_model = XGBClassifier(subsample = subsample, learning_rate=0.1, verbosity=1, random_state=RANDOM_STATE,
                               early_stopping_rounds=10)
     xgb_model.fit(x_train_norm, y_train_smote, eval_set=[(x_cv_norm, y_cv)])
 
@@ -92,9 +95,9 @@ print(accuracy_list_train)
 print(accuracy_list_val)
 
 plt.title('Train x Validation metrics')
-plt.xlabel('min_sample_split')
+plt.xlabel('subsamples')
 plt.ylabel('accuracy')
-plt.xticks(ticks = range(len(min_samples_split_list )),labels=min_samples_split_list)
+plt.xticks(ticks = range(len(subsamples_list )),labels=subsamples_list)
 plt.plot(accuracy_list_train)
 plt.plot(accuracy_list_val)
 plt.legend(['Train','Validation'])
