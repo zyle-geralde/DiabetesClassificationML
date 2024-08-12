@@ -103,6 +103,9 @@ plt.plot(accuracy_list_val)
 plt.legend(['Train','Validation'])
 plt.show()
 
+#for max-depth
+
+
 
 
 
