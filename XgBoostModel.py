@@ -201,9 +201,17 @@ xgb_model.fit(x_train_norm, y_train_smote, eval_set=[(x_cv_norm, y_cv)])
 
 accuracy_train = accuracy_score(xgb_model.predict(x_train_norm), y_train_smote)
 accuracy_val = accuracy_score(xgb_model.predict(x_cv_norm), y_cv)
+precission_train = precision_score(xgb_model.predict(x_train_norm), y_train_smote)
+precision_val = precision_score(xgb_model.predict(x_cv_norm), y_cv)
+recall_train = recall_score(xgb_model.predict(x_train_norm), y_train_smote)
+recall_val = recall_score(xgb_model.predict(x_cv_norm), y_cv)
 
 print(accuracy_train)
 print(accuracy_val)
+print(precission_train)
+print(precision_val)
+print(recall_train)
+print(recall_val)
 
 
 
